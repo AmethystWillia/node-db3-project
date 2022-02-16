@@ -28,6 +28,7 @@ async function findById(scheme_id) { // EXERCISE B
   const result = await db('schemes as sc')
     .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
     .select('sc.scheme_id', 'scheme_name', 'step_id', 'step_number', 'instructions')
+    .orderBy('step_number')
     .where('sc.scheme_id', scheme_id);
 
   const scheme = {
