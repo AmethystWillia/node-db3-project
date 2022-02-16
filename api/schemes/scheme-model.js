@@ -24,7 +24,31 @@ function find() { // EXERCISE A
       .count('st.step_id as number_of_steps');
 }
 
-function findById(scheme_id) { // EXERCISE B
+async function findById(scheme_id) { // EXERCISE B
+  const result = await db('schemes as sc')
+    .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+    .select('sc.scheme_id', 'scheme_name', 'step_id', 'step_number', 'instructions')
+    .where('sc.scheme_id', scheme_id);
+
+  const scheme = {
+    scheme_id: result[0].scheme_id,
+    scheme_name: result[0].scheme_name,
+    steps: []
+  };
+
+  if (result[0].step_id === null) {
+    return scheme;
+  }
+
+  for (let step of result) {
+    scheme.steps.push({
+      step_id: step.step_id,
+      step_number: step.step_number,
+      instructions: step.instructions,
+    });
+  }
+
+  return scheme;
   /*
     1B- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`:
 
