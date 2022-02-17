@@ -138,25 +138,15 @@ async function findSteps(scheme_id) { // EXERCISE C
         }
       ]
   */
-    const result = await db('steps as st')
-      .leftJoin('schemes as sc', 'st.scheme_id', 'sc.scheme_id')
-      .groupBy('sc.scheme_id')
-      .select('step_id', 'step_number', 'instructions', 'sc.scheme_name')
+    const result = await db('schemes as sc')
+      .leftJoin('steps as st', 'sc.scheme_id', 'st.scheme_id')
+      .select('st.step_id', 'st.step_number', 'st.instructions', 'sc.scheme_name')
       .orderBy('step_number')
-      .where('st.scheme_id', scheme_id);
+      .where('sc.scheme_id', scheme_id);
 
-    const steps = [];
+    if (!result[0].step_id) return [];
 
-    for (let step of result) {
-      steps.push({
-        step_id: step.step_id,
-        step_number: step.step_number,
-        instructions: step.instructions,
-        scheme_name: step.scheme_name,
-      });
-    }
-
-    return steps
+    return result;
 }
 
 function add(scheme) { // EXERCISE D
