@@ -8,11 +8,18 @@ const db = require('../../data/db-config');
   }
 */
 const checkSchemeId = async (req, res, next) => {
-  const scheme = await db('schemes').where('scheme_id', req.params.id).first()
-  if (scheme) {
-    next()
-  } else {
-    next({ message: `scheme with scheme_id ${req.params.id} not found`, status: 404 })
+  try {
+    const exist = await db('schemes')
+      .where('scheme_id', req.params.scheme_id)
+      .first()
+    
+    if (exist) {
+      next();
+    } else {
+      res.status(404).json({ message: `scheme with scheme_id ${req.params.scheme_id} not found` });
+    }
+  } catch (err) {
+    next(err);
   }
 }
 
